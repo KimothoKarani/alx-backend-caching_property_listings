@@ -1,15 +1,14 @@
 from django.http import JsonResponse
 from django.views.decorators.cache import cache_page
-from .models import Property
+from .utils import get_all_properties
 
-# Cache this view for 15 minutes
+# Cache view response for 15 minutes
 @cache_page(60 * 15)
 def property_list(request):
     """
-    Returns a JSON response with all property listings.
-    Cached in Redis for 15 minutes.
+    Returns all property listings as JSON.
+    Uses Redis low-level caching (1 hour) for the queryset,
+    and view-level caching (15 mins) for the response.
     """
-    properties = Property.objects.all().values(
-        "id", "title", "description", "price", "location", "created_at"
-    )
-    return JsonResponse({"data": list(properties)})
+    properties = get_all_properties()
+    return JsonResponse({"data": properties})
