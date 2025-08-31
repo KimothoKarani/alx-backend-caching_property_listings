@@ -32,21 +32,19 @@ def get_redis_cache_metrics():
     """
     try:
         # Get the low-level Redis client instance from django_redis
-        # The cache.client._client is the actual redis-py client object
-        redis_client = cache.get_client(None) # Pass None to get default client
-        # If using multiple clients, it might return a list, take the first one
+        redis_client = cache.get_client(None)
         if isinstance(redis_client, list):
             redis_client = redis_client[0]
 
-
         # Get Redis INFO statistics
-        info = redis_client.info('Keyspace') # 'Keyspace' section contains hit/miss stats
+        # The 'Keyspace' section contains hit/miss stats
+        info = redis_client.info('Keyspace')
 
         keyspace_hits = info.get('keyspace_hits', 0)
         keyspace_misses = info.get('keyspace_misses', 0)
 
         total_requests = keyspace_hits + keyspace_misses
-        hit_ratio = 0.0
+        hit_ratio = 0.0 # Default to 0.0
         if total_requests > 0:
             hit_ratio = (keyspace_hits / total_requests) * 100
 
@@ -57,7 +55,7 @@ def get_redis_cache_metrics():
             'hit_ratio': f"{hit_ratio:.2f}%"
         }
 
-        logger.info(f"Redis Cache Metrics: {json.dumps(metrics)}") # Log metrics
+        logger.info(f"Redis Cache Metrics: {json.dumps(metrics)}")
         return metrics
 
     except Exception as e:
