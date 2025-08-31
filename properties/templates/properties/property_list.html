@@ -1,0 +1,25 @@
+<!-- alx-backend-caching_property_listings/properties/templates/properties/property_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Listings</title>
+</head>
+<body>
+    <h1>Property Listings</h1>
+    <ul>
+        {% for property in properties %}
+            <li>
+                <h2>{{ property.title }}</h2>
+                <p><strong>Location:</strong> {{ property.location }}</p>
+                <p><strong>Price:</strong> ${{ property.price }}</p>
+                <p>{{ property.description|truncatechars:100 }}</p>
+                <small>Listed on: {{ property.created_at|date:"M d, Y" }}</small>
+            </li>
+        {% empty %}
+            <li>No properties found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
