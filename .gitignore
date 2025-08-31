@@ -1,0 +1,38 @@
+# Python
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Virtual Environment
+# The directory containing your virtual environment
+venv/
+env/
+.env # Common for environment variables [1, 3, 4]
+
+# Django-specific files
+*.log # Log files [1, 2]
+*.pot # Portable Object Template files for translations [1]
+db.sqlite3 # Default SQLite database file [1, 2, 4]
+media/ # User-uploaded media files (often served statically, but not committed) [2, 3, 4]
+static_root/ # Directory where Django collects static files (e.g., for deployment)
+
+# IDE specific files
+.idea/ # PyCharm project configuration directory [1, 2, 4]
+*.iml # IntelliJ IDEA module files
+
+# Operating System Files
+.DS_Store # macOS specific files [1]
+Thumbs.db # Windows specific files [1]
+
+# Docker-related (if building images and local volumes)
+# If you have specific build artifacts or local volumes that shouldn't be committed
+# For example, if Docker creates local mount points that you don't want to track
+# You generally commit docker-compose.yml itself, but ignore generated data.
+# Often, you don't need to add much here unless you have specific volumes.
+
+# Testing and Coverage
+.coverage # Coverage report file [1]
+.tox/ # Tox test environments [1]
+
+# Installer logs
+pip-log.txt
