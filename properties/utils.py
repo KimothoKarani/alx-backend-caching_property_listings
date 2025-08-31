@@ -25,28 +25,41 @@ def get_all_properties():
 
     return properties
 
+import logging
+from django_redis import get_redis_connection
+
+logger = logging.getLogger(__name__)
+
 def get_redis_cache_metrics():
     """
     Retrieves Redis cache hit/miss statistics and calculates hit ratio.
     """
-    conn = get_redis_connection("default")
-    info = conn.info("stats")
+    try:
+        conn = get_redis_connection("default")
+        info = conn.info("stats")
 
-    keyspace_hits = info.get("keyspace_hits", 0)
-    keyspace_misses = info.get("keyspace_misses", 0)
+        keyspace_hits = info.get("keyspace_hits", 0)
+        keyspace_misses = info.get("keyspace_misses", 0)
 
-    total_requests = keyspace_hits + keyspace_misses
+        total_requests = keyspace_hits + keyspace_misses
+        hit_ratio = (keyspace_hits / total_requests) if total_requests > 0 else 0
 
-    if total_requests > 0:
-        hit_ratio = keyspace_hits / total_requests
-    else:
-        hit_ratio = 0
+        metrics = {
+            "keyspace_hits": keyspace_hits,
+            "keyspace_misses": keyspace_misses,
+            "total_requests": total_requests,
+            "hit_ratio": round(hit_ratio, 2),
+        }
 
-    metrics = {
-        "keyspace_hits": keyspace_hits,
-        "keyspace_misses": keyspace_misses,
-        "hit_ratio": round(hit_ratio, 2),
-    }
+        logger.info(f"Redis Cache Metrics: {metrics}")
+        return metrics
 
-    logger.info(f"Redis Cache Metrics: {metrics}")
-    return metrics
+    except Exception as e:
+        logger.error(f"Error retrieving Redis cache metrics: {e}")
+        return {
+            "keyspace_hits": "N/A",
+            "keyspace_misses": "N/A",
+            "total_requests": "N/A",
+            "hit_ratio": "N/A",
+            "error": str(e),
+        }
